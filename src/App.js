@@ -3,21 +3,26 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
+function parseForURL(str) {
+  return str
+    .trim()
+    .split("")
+    .reduce((acc, curr) => {
+      return curr === " " ? `${acc}_` : `${acc}${curr}`;
+    }, "");
+}
+
 function App() {
   const [textInput, setTextInput] = useState("");
   const [pageList, setPageList] = useState([]);
   const [numOfTitlesVisible, setNumOfTitlesVisible] = useState(0);
+  const [currentArticle, setCurrentArticle] = useState();
 
   const searchTitle = () => {
-    let str = textInput
-      .trim()
-      .split("")
-      .reduce((acc, curr) => {
-        return curr === " " ? `${acc}_` : `${acc}${curr}`;
-      }, "");
-
     fetch(
-      `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=100&gsrsearch=${str}`
+      `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=100&gsrsearch=${parseForURL(
+        textInput
+      )}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -35,10 +40,19 @@ function App() {
   };
 
   const handleClick = (item) => {
-    console.log(item);
     if (item.title === "SHOW MORE") {
       setNumOfTitlesVisible(numOfTitlesVisible + 5);
     }
+
+    fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&uselang=user&prop=revisions&titles=${item.title}&formatversion=2&rvprop=content&rvslots=*`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setCurrentArticle(data.query);
+        console.log(data.query.pages[0].revisions[0].slots.main.content);
+      });
+    setPageList([]);
   };
 
   return (

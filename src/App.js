@@ -39,22 +39,6 @@ function App() {
     console.log(pageList);
   };
 
-  const handleClick = (item) => {
-    if (item.title === "SHOW MORE") {
-      setNumOfTitlesVisible(numOfTitlesVisible + 5);
-    }
-
-    fetch(
-      `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&uselang=user&prop=revisions&titles=${item.title}&formatversion=2&rvprop=content&rvslots=*`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setCurrentArticle(data.query);
-        console.log(data.query.pages[0].revisions[0].slots.main.content);
-      });
-    setPageList([]);
-  };
-
   return (
     <Box
       display="flex"
@@ -80,7 +64,11 @@ function App() {
           ].map((curr) => {
             return (
               <Box
-                onClick={() => handleClick(curr)}
+                onClick={() =>
+                  window.open(
+                    `https://en.wikipedia.org/wiki/${parseForURL(curr.title)}`
+                  )
+                }
                 key={curr.pageID}
                 sx={{
                   color: "white",

@@ -1,8 +1,21 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  InputBase,
+  IconButton,
+  Paper,
+  Divider,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import EastIcon from "@mui/icons-material/East";
+import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
+import DirectionsIcon from "@mui/icons-material/Directions";
 
 function parseForURL(str) {
   return str
@@ -61,34 +74,69 @@ function App() {
   };
 
   const DisplayResults = () => {
-    return pageList.length > 0
-      ? [
-          ...pageList.slice(0, numOfTitlesVisible),
-          { pageID: 0, title: "SHOW MORE" },
-        ].map((curr) => {
-          return (
-            <Box
-              onClick={() => handleClickGO(curr.title)}
-              key={curr.pageID}
-              backgroundColor="primary"
-              border="1px solid white"
-              borderRadius={5}
-              margin={1}
-              color="white"
-              flexWrap="wrap"
-              width={"10rem"}
-              height="3rem"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              textAlign="center"
-            >
-              {" "}
-              <Typography>{curr.title}</Typography>
-            </Box>
-          );
-        })
-      : null;
+    return (
+      <Box display="flex" marginTop={5}>
+        {pageList.length > 0
+          ? [...pageList.slice(0, numOfTitlesVisible)].map((curr) => {
+              return (
+                <Box
+                  onClick={() => handleClickGO(curr.title)}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "black",
+                      color: "white",
+                      cursor: "pointer",
+                    },
+                    "&:active": {
+                      background: "pink",
+                    },
+                  }}
+                  key={curr.pageID}
+                  backgroundColor="white"
+                  border="1px solid white"
+                  borderRadius={5}
+                  margin={1}
+                  // flexWrap="wrap"
+                  width={"10rem"}
+                  height="3rem"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  {" "}
+                  <Typography marginTop={0.5}>{curr.title}</Typography>
+                </Box>
+              );
+            })
+          : null}
+        <Box
+          onClick={() => setNumOfTitlesVisible(numOfTitlesVisible + 5)}
+          sx={{
+            "&:hover": {
+              backgroundColor: "black",
+              color: "white",
+              cursor: "pointer",
+            },
+            "&:active": {
+              background: "pink",
+            },
+          }}
+          backgroundColor="white"
+          border="1px solid white"
+          borderRadius={5}
+          margin={1}
+          // flexWrap="wrap"
+          width={"10rem"}
+          height="3rem"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          {" "}
+          <Typography>SHOW MORE</Typography>
+        </Box>
+      </Box>
+    );
   };
 
   return (
@@ -104,25 +152,41 @@ function App() {
         <Typography color="white" variant="h1">
           Wiki
         </Typography>
-        <TextField
-          variant="filled"
-          label="Search"
-          sx={{ backgroundColor: "white", marginTop: 10 }}
-          value={textInput}
-          onChange={(e) => setTextInput(e.target.value)}
-        />
-        <Button
+
+        <Paper
+          component="form"
+          sx={{
+            p: "2px 4px",
+            display: "flex",
+            alignItems: "center",
+            width: 400,
+          }}
+        >
+          <InputBase
+            sx={{ ml: 1, flex: 1, paddingTop: 1 }}
+            placeholder="Search Wikipedia"
+            inputProps={{ "aria-label": "search google maps" }}
+            onChange={(e) => setTextInput(e.target.value)}
+          />
+          <IconButton
+            type="button"
+            sx={{ p: "10px" }}
+            aria-label="search"
+            onClick={searchTitle}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Paper>
+
+        {/* <Button
           variant="contained"
           onClick={() => {
             window.open("https://en.wikipedia.org/wiki/Special:Random");
           }}
         >
           RANDOM ARTICLE
-        </Button>
-        <Button variant="contained" onClick={searchTitle}>
-          GO
-        </Button>
-        <DisplayResults />
+        </Button> */}
+        {pageList.lengt > 0 ? <DisplayResults /> : null}
       </Box>
     </ThemeProvider>
   );
